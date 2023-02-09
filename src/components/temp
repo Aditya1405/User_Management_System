@@ -1,0 +1,119 @@
+import React, { Fragment, useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.css";
+import {
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormText,
+  Container
+} from "reactstrap";
+import axios from "axios";
+import base_url from "../api/bootapi";
+import { toast } from "react-toastify";
+
+const AddCourse = () => {
+  useEffect(() => {
+    document.title = "Add Course";
+  }, []);
+  const [user, setUser] = useState({ name: "", city: "", status: "" });
+
+  const handleForm = (e) => {
+    console.log(user);
+    postData(user);
+    e.preventDefault();
+  };
+  const postData = (data) => {
+    axios.post(`${base_url}/users`, data).then(
+      (response) => {
+        reset();
+        //success
+        toast.success("User has been saved", { position: "bottom-center" });
+      },
+      (error) => {
+        //fail
+        console.log(error);
+        toast.error("something went wrong", { position: "bottom-center" });
+      }
+    );
+  };
+  function handleChange(event) {
+    const { name, value } = event.target;
+    setUser((prevValue) => {
+      return { ...prevValue, [name]: value };
+    });
+    console.log(user);
+    // setContact(prevValue => {
+    //   if (name === "fName") {
+    //     return {
+    //       fName: value,
+    //       lName: prevValue.lName,
+    //       email: prevValue.email
+    //     };
+    //   } else if (name === "lName") {
+    //     return {
+    //       fName: prevValue.fName,
+    //       lName: value,
+    //       email: prevValue.email
+    //     };
+    //   } else if (name === "email") {
+    //     return {
+    //       fName: prevValue.fName,
+    //       lName: prevValue.lName,
+    //       email: value
+    //     };
+    //   }
+    // });
+  }
+  const reset = () => {
+    setUser(() => {
+      return { name: "", city: "", status: "" };
+    });
+  };
+  return (
+    <Fragment>
+      <Form onSubmit={handleForm}>
+        <FormGroup>
+          <Label for="Name">Name</Label>
+          <Input
+            onChange={handleChange}
+            type="text"
+            name="name"
+            value={user.name}
+            placeholder="enter user name"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="City">City</Label>
+          <Input
+            onChange={handleChange}
+            type="text"
+            name="city"
+            value={user.city}
+            placeholder="enter user City"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label for="Status">Status</Label>
+          <Input
+            onChange={handleChange}
+            type="text"
+            name="status"
+            value={user.status}
+            placeholder="enter course Status"
+          />
+        </FormGroup>
+        <Container>
+          <Button color="success" type="submit">
+            Add course
+          </Button>
+          <Button color="warning " onClick={reset} className="ml-2">
+            Clear
+          </Button>
+        </Container>
+      </Form>
+    </Fragment>
+  );
+};
+export default AddCourse;
